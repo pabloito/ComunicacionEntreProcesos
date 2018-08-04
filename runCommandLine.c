@@ -4,6 +4,10 @@
 #include <string.h>
 #define MAXPATH_LEN 255
 
+//https://stackoverflow.com/questions/28507950/calling-ls-with-execv
+//https://stackoverflow.com/questions/230062/whats-the-best-way-to-check-if-a-file-exists-in-c-cross-platform
+//https://jineshkj.wordpress.com/2006/12/22/how-to-capture-stdin-stdout-and-stderr-of-child-program/
+
 
 int executeCommand(char * command, char ** args);
 int exists(const char *fname);
