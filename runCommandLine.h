@@ -27,9 +27,5 @@ int executeCommand(char * command, char ** args);
 int exists(const char *fname);
 int fetchInputFromStdin(char ** bufferPosition);
 void resetBuffer(char * buffer, int size);
-char parityByte(char * string, int size);
-char * charToHex(char ch);
-char hxNumberToChar(char number);
-int isDigit(char c);
 
 #endif
