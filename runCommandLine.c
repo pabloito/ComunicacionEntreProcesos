@@ -67,10 +67,11 @@ int main(int argc, char ** args)
       write(PRODUCER_WRITE_FD, input, size);
 
       char parity = parityByte(input, size);
+      char * bytes = charToHex(parity);
 
       free(input);
 
-      fprintf(stderr, "in parity: %c\n",parity);
+      fprintf(stderr, "in parity: %s\n",bytes);
 
       close(PRODUCER_WRITE_FD);
 
@@ -80,15 +81,31 @@ int main(int argc, char ** args)
     close(PRODUCER_WRITE_FD);
     close(FILTER_READ_FD);
     close(FILTER_WRITE_FD);
-    char finished=0;
-    char buffer[11]={0};
-    while(!finished){
-      finished=!read(CONSUMER_READ_FD,buffer,10);
-      buffer[10]=0;
-      printf("%s",buffer);
+
+    char buffer[10]={0};
+    int readSize =0, size=0, allocsize=INITIAL_INPUT_SIZE;
+    char * string = malloc(allocsize);
+
+    while((readSize = read(CONSUMER_READ_FD,buffer,10))!=0){
+      if(size==allocsize){
+        allocsize+=INITIAL_INPUT_SIZE;
+        string = realloc(string, allocsize);
+      }
+      size=+readSize;
+
+      strcat(string,buffer);
       resetBuffer(buffer,10);
     }
+    char parity = parityByte(string,size);
+    char * bytes = charToHex(parity);
+
+
+    fprintf(stderr, "in parity: %s\n",bytes);
+
+    printf("%s",string);
     putchar('\n');
+
+    free(string);
     close(CONSUMER_READ_FD);
   }
 }
@@ -160,5 +177,41 @@ char parityByte(char * string, int size)
 
 char * charToHex(char ch)
 {
+  char * ret=malloc(5);
 
+  char coefficientNumber = ch/16;
+  char surplusNumber = ch%16;
+
+  char coefficient=hxNumberToChar(coefficientNumber);
+  char surplus=hxNumberToChar(surplusNumber);
+
+  ret[0]='0';
+  ret[1]='x';
+  ret[2]=coefficient;
+  ret[3]=surplus;
+  ret[4]=0;
+
+  return ret;
+}
+
+char hxNumberToChar(char number)
+{
+  if(isDigit(number)){
+    return number+48;
+  }
+  if(number==10) return 'A';
+  if(number==11) return 'B';
+  if(number==12) return 'C';
+  if(number==14) return 'D';
+  if(number==13) return 'E';
+  if(number==15) return 'F';
+  return 0;
+}
+
+int isDigit(char c)
+{
+  if(c==0||c==1 || c==2 || c==3 || c==4 || c==5 || c==6 || c==7 || c==8 || c==9){
+    return 1;
+  }
+  return 0;
 }
