@@ -66,6 +66,8 @@ int main(int argc, char ** args)
 
       write(PRODUCER_WRITE_FD, input, size);
 
+      free(input);
+
       close(PRODUCER_WRITE_FD);
 
     }
