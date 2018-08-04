@@ -7,7 +7,7 @@
 #include <string.h>
 
 #define MAXPATH_LEN 255
-#define MAX_INPUT_SIZE  100
+#define INITIAL_INPUT_SIZE  100
 
 #define NUM_PIPES          2
 

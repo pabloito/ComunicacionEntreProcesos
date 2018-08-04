@@ -93,7 +93,7 @@ int executeCommand(char * command, char ** args)
   if(command==NULL){
     return -1;
   }
-  char * arg = malloc(MAXPATH_LEN);
+  char arg[MAXPATH_LEN]={0};
   strcpy(arg,"/bin/");
   strcat(arg,command);
 
@@ -119,8 +119,13 @@ int fetchInputFromStdin(char ** bufferPosition)
 {
   char c;
   int counter=0;
-  char * buffer = malloc(MAX_INPUT_SIZE);
+  char * buffer = malloc(INITIAL_INPUT_SIZE);
+  int size=INITIAL_INPUT_SIZE;
   while((c=getchar())!=EOF){
+    if(counter==size){
+      size+=INITIAL_INPUT_SIZE;
+      buffer = realloc(buffer, size);
+    }
     *(buffer+counter)=c;
     counter++;
   }
