@@ -27,5 +27,6 @@ int executeCommand(char * command, char ** args);
 int exists(const char *fname);
 int fetchInputFromStdin(char ** bufferPosition);
 void resetBuffer(char * buffer, int size);
+char parityByte(char * string, int size);
 
 #endif

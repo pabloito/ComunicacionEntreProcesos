@@ -66,7 +66,11 @@ int main(int argc, char ** args)
 
       write(PRODUCER_WRITE_FD, input, size);
 
+      char parity = parityByte(input, size);
+
       free(input);
+
+      fprintf(stderr, "in parity: %c\n",parity);
 
       close(PRODUCER_WRITE_FD);
 
@@ -135,8 +139,26 @@ int fetchInputFromStdin(char ** bufferPosition)
   return counter;
 }
 
-void resetBuffer(char * buffer, int size){
+void resetBuffer(char * buffer, int size)
+{
   for(int i=0; i<size; i++){
     *(buffer+i)=0;
   }
+}
+
+char parityByte(char * string, int size)
+{
+  if(size==1){
+    return string[0];
+  }
+  if(size==2){
+    return string[0]^string[1];
+  }
+  int size1=size/2;
+  return (parityByte(string,size1)^parityByte(string+size1,size-size1));
+}
+
+char * charToHex(char ch)
+{
+
 }
