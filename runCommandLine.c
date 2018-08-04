@@ -3,7 +3,6 @@
 //https://stackoverflow.com/questions/230062/whats-the-best-way-to-check-if-a-file-exists-in-c-cross-platform
 //https://jineshkj.wordpress.com/2006/12/22/how-to-capture-stdin-stdout-and-stderr-of-child-program/
 
-
 int pipes[NUM_PIPES][2];
 
 int main(int argc, char ** args)
@@ -76,9 +75,10 @@ int main(int argc, char ** args)
     close(FILTER_READ_FD);
     close(FILTER_WRITE_FD);
     char finished=0;
-    char buffer[10]={0};
+    char buffer[11]={0};
     while(!finished){
       finished=!read(CONSUMER_READ_FD,buffer,10);
+      buffer[10]=0;
       printf("%s",buffer);
       resetBuffer(buffer,10);
     }
