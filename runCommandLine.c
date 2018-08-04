@@ -1,40 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#define MAXPATH_LEN 255
-#define MAX_INPUT_SIZE  100
-
-
+#include "runCommandLine.h"
 //https://stackoverflow.com/questions/28507950/calling-ls-with-execv
 //https://stackoverflow.com/questions/230062/whats-the-best-way-to-check-if-a-file-exists-in-c-cross-platform
 //https://jineshkj.wordpress.com/2006/12/22/how-to-capture-stdin-stdout-and-stderr-of-child-program/
 
 
-int executeCommand(char * command, char ** args);
-int exists(const char *fname);
-int fetchInputFromStdin(char ** bufferPosition);
-
-
-#define NUM_PIPES          2
-
-#define FILTER_READ_PIPE   0
-#define FILTER_WRITE_PIPE  1
-
 int pipes[NUM_PIPES][2];
-
-/* always in a pipe[], pipe[0] is for read and
-   pipe[1] is for write */
-#define READ_FD  0
-#define WRITE_FD 1
-
-#define CONSUMER_READ_FD  ( pipes[FILTER_WRITE_PIPE][READ_FD]   )
-#define PRODUCER_WRITE_FD ( pipes[FILTER_READ_PIPE][WRITE_FD] )
-
-#define FILTER_READ_FD   ( pipes[FILTER_READ_PIPE][READ_FD]  )
-#define FILTER_WRITE_FD  ( pipes[FILTER_WRITE_PIPE][WRITE_FD]  )
-
-
 
 int main(int argc, char ** args)
 {
@@ -110,6 +80,7 @@ int main(int argc, char ** args)
     while(!finished){
       finished=!read(CONSUMER_READ_FD,buffer,10);
       printf("%s",buffer);
+      resetBuffer(buffer,10);
     }
     putchar('\n');
     close(CONSUMER_READ_FD);
@@ -155,4 +126,10 @@ int fetchInputFromStdin(char ** bufferPosition)
   }
   *bufferPosition=buffer;
   return counter;
+}
+
+void resetBuffer(char * buffer, int size){
+  for(int i=0; i<size; i++){
+    *(buffer+i)=0;
+  }
 }
