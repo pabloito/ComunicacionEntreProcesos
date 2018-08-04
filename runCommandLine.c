@@ -100,7 +100,7 @@ int main(int argc, char ** args)
     char * bytes = charToHex(parity);
 
 
-    fprintf(stderr, "in parity: %s\n",bytes);
+    fprintf(stderr, "out parity: %s\n",bytes);
 
     printf("%s",string);
     putchar('\n');
