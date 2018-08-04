@@ -88,7 +88,6 @@ int main(int argc, char ** args)
     char * string = malloc(allocsize);
 
     while((readSize = read(CONSUMER_READ_FD,buffer,10))!=0){
-      printf("\n");
       if(size>=allocsize){
         allocsize+=INITIAL_INPUT_SIZE;
         string = realloc(string, allocsize);
@@ -100,15 +99,16 @@ int main(int argc, char ** args)
       resetBuffer(buffer,10);
     }
     char parity = parityByte(string,size);
-    char * bytes = charToHex(parity);
+    char * hexString = charToHex(parity);
 
 
-    fprintf(stderr, "out parity: %s\n",bytes);
+    fprintf(stderr, "out parity: %s\n",hexString);
 
     printf("%s",string);
     putchar('\n');
 
     free(string);
+    free(hexString);
     close(CONSUMER_READ_FD);
   }
 }
