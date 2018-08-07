@@ -67,7 +67,7 @@ int main(int argc, char ** args)
 
       write(PRODUCER_WRITE_FD, input, size);
 
-      char parity = parityByte(input, size);
+      char parity = parityByte(input, size-1);
       char * bytes = charToHex(parity);
 
       free(input);
@@ -83,29 +83,28 @@ int main(int argc, char ** args)
     close(FILTER_READ_FD);
     close(FILTER_WRITE_FD);
 
-    char buffer[11]={0};
+    char buffer[READ_BUFFER_SIZE+1]={0};
     int readSize =0, size=0, allocsize=INITIAL_INPUT_SIZE;
     char * string = malloc(allocsize);
 
-    while((readSize = read(CONSUMER_READ_FD,buffer,10))!=0){
+    while((readSize = read(CONSUMER_READ_FD,buffer,READ_BUFFER_SIZE))!=0){
       if(size>=allocsize){
         allocsize+=INITIAL_INPUT_SIZE;
         string = realloc(string, allocsize);
       }
-      size=+readSize;
+      size+=readSize;
 
-      buffer[11]=0;
+      buffer[READ_BUFFER_SIZE]=0;
       strcat(string,buffer);
-      resetBuffer(buffer,10);
+      resetBuffer(buffer,READ_BUFFER_SIZE);
     }
-    char parity = parityByte(string,size);
+    char parity = parityByte(string,size-1);
     char * hexString = charToHex(parity);
 
 
     fprintf(stderr, "out parity: %s\n",hexString);
 
-    printf("%s",string);
-    putchar('\n');
+    printf("%s\n",string);
 
     free(string);
     free(hexString);

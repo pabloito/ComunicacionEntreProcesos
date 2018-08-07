@@ -8,6 +8,7 @@
 
 #define MAXPATH_LEN 255
 #define INITIAL_INPUT_SIZE  100
+#define READ_BUFFER_SIZE 10
 
 #define NUM_PIPES          2
 
