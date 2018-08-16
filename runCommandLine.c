@@ -103,6 +103,7 @@ int main(int argc, char ** args)
     free(hexString);
     close(CONSUMER_READ_FD);
   }
+}
 
 int fetchInputFromStdin(char ** bufferPosition)
 {
