@@ -24,7 +24,6 @@
 #define FILTER_READ_FD   ( pipes[FILTER_READ_PIPE][READ_FD]  )
 #define FILTER_WRITE_FD  ( pipes[FILTER_WRITE_PIPE][WRITE_FD]  )
 
-int executeCommand(char * command, char ** args);
 int exists(const char *fname);
 int fetchInputFromStdin(char ** bufferPosition);
 void resetBuffer(char * buffer, int size);

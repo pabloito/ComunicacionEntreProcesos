@@ -3,10 +3,10 @@
 char parityByte(char * string, int size)
 {
   if(size==1){
-    return string[0];
+    return *string;
   }
   if(size==2){
-    return string[0]^string[1];
+    return *string^*(string+1);
   }
   int size1=size/2;
   return (parityByte(string,size1)^parityByte(string+size1,size-size1));

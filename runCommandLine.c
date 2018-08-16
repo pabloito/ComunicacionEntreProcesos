@@ -8,8 +8,8 @@ int pipes[NUM_PIPES][2];
 
 int main(int argc, char ** args)
 {
-  if(argc<2){
-    printf("Please send at least one parameter\n");
+  if(argc!=2){
+    printf("Please send one parameter with the following format: \"[param]\"\n");
     exit(-1);
   }
   char * command = args[1];
@@ -42,20 +42,7 @@ int main(int argc, char ** args)
       close(FILTER_READ_FD);
       close(FILTER_WRITE_FD);
 
-      int result = executeCommand(command,args+1);
-
-      switch(result){
-          case 0:
-          break;
-          case 1:
-            printf("Command does not exist\n");
-          break;
-          case -1:
-            printf("Received a null command\n");
-          break;
-        }
-        return 1;
-
+      system(command); //executes command in parameter
     }
     else{ //PRODUCER PROCESS
       close(FILTER_READ_FD);
@@ -67,7 +54,7 @@ int main(int argc, char ** args)
 
       write(PRODUCER_WRITE_FD, input, size);
 
-      char parity = parityByte(input, size-1);
+      char parity = parityByte(input, size);
       char * bytes = charToHex(parity);
 
       free(input);
@@ -98,7 +85,7 @@ int main(int argc, char ** args)
       strcat(string,buffer);
       resetBuffer(buffer,READ_BUFFER_SIZE);
     }
-    char parity = parityByte(string,size-1);
+    char parity = parityByte(string,size);
     char * hexString = charToHex(parity);
 
 
@@ -110,23 +97,6 @@ int main(int argc, char ** args)
     free(hexString);
     close(CONSUMER_READ_FD);
   }
-}
-
-
-int executeCommand(char * command, char ** args)
-{
-  if(command==NULL){
-    return -1;
-  }
-  char arg[MAXPATH_LEN]={0};
-  strcpy(arg,"/bin/");
-  strcat(arg,command);
-
-  if(exists(arg)){
-    execv(arg, args);
-    return 0;
-  }
-  return 1;
 }
 
 int exists(const char *fname)
