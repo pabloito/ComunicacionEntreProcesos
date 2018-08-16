@@ -39,7 +39,7 @@ int main(int argc, char ** args)
     pid=fork();
 
     if(pid==0){ //FILTER PROCESS
-      close(CONSUMER_READ_FD);t
+      close(CONSUMER_READ_FD);
       close(PRODUCER_WRITE_FD);
 
       dup2(FILTER_READ_FD, STDIN_FILENO);
