@@ -1,11 +1,17 @@
 #include "runCommandLine.h"
 #include "parityByte.h"
 //https://stackoverflow.com/questions/28507950/calling-ls-with-execv
-//https://stackoverflow.com/questions/230062/whats-the-best-way-to-check-if-a-file-exists-in-c-cross-platform
 //https://jineshkj.wordpress.com/2006/12/22/how-to-capture-stdin-stdout-and-stderr-of-child-program/
 
 int pipes[NUM_PIPES][2];
 
+
+/*
+The Program executes 3 processes.
+Producer Process reads from STDIN and sends input to FILTER_READ_PIPE.
+Filter Process executes the bash command received, the command reads from FILTER_READ_PIPE and writes to FILTER_WRITE_PIPE
+Consumer Process reads from FILTER_WRITE_PIPE and prints to STDOUT
+*/
 int main(int argc, char ** args)
 {
   if(argc!=2){
@@ -33,7 +39,7 @@ int main(int argc, char ** args)
     pid=fork();
 
     if(pid==0){ //FILTER PROCESS
-      close(CONSUMER_READ_FD);
+      close(CONSUMER_READ_FD);t
       close(PRODUCER_WRITE_FD);
 
       dup2(FILTER_READ_FD, STDIN_FILENO);
@@ -97,18 +103,6 @@ int main(int argc, char ** args)
     free(hexString);
     close(CONSUMER_READ_FD);
   }
-}
-
-int exists(const char *fname)
-{
-    FILE *file;
-    if ((file = fopen(fname, "r")))
-    {
-        fclose(file);
-        return 1;
-    }
-    return 0;
-}
 
 int fetchInputFromStdin(char ** bufferPosition)
 {
