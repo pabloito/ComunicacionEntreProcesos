@@ -2,6 +2,10 @@
 
 char parityByte(char * string, int size)
 {
+  if(size==0)
+  {
+    return 0;
+  }
   if(size==1){
     return *string;
   }

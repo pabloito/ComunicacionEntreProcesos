@@ -14,11 +14,20 @@ Consumer Process reads from FILTER_WRITE_PIPE and prints to STDOUT
 */
 int main(int argc, char ** args)
 {
-  if(argc!=2){
+  if(argc!=2)
+  {
+    printf("Please execute the program with one parameter in the following format: ./prog \"param\"\n");
+    exit(-1);
+  }
+  if(strcmp(args[1],"")==0)
+  {
     printf("Please execute the program with one parameter in the following format: ./prog \"param\"\n");
     exit(-1);
   }
   char * command = args[1];
+
+  char * input;
+  int size = fetchInputFromStdin(&input);
 
   //initialize pipes
   if(pipe(pipes[FILTER_READ_PIPE])==-1){
@@ -54,9 +63,6 @@ int main(int argc, char ** args)
       close(FILTER_READ_FD);
       close(FILTER_WRITE_FD);
       close(CONSUMER_READ_FD);
-
-      char * input;
-      int size = fetchInputFromStdin(&input);
 
       write(PRODUCER_WRITE_FD, input, size);
 
