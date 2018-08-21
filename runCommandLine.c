@@ -15,7 +15,7 @@ Consumer Process reads from FILTER_WRITE_PIPE and prints to STDOUT
 int main(int argc, char ** args)
 {
   if(argc!=2){
-    printf("Please send one parameter with the following format: \"[param]\"\n");
+    printf("Please execute the program with one parameter in the following format: ./prog \"param\"\n");
     exit(-1);
   }
   char * command = args[1];
