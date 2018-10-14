@@ -50,6 +50,7 @@ int main(int argc, char ** args)
     if(pid==0){ //FILTER PROCESS
       close(CONSUMER_READ_FD);
       close(PRODUCER_WRITE_FD);
+      free(input);
 
       dup2(FILTER_READ_FD, STDIN_FILENO);
       dup2(FILTER_WRITE_FD, STDOUT_FILENO);
@@ -57,7 +58,13 @@ int main(int argc, char ** args)
       close(FILTER_READ_FD);
       close(FILTER_WRITE_FD);
 
-      system(command); //executes command in parameter
+      int status = system(command);
+      if(WSTOPSIG(status)==127)
+      {
+        perror("Invalid command");
+        exit(-1);
+      }
+      exit(0);
     }
     else{ //PRODUCER PROCESS
       close(FILTER_READ_FD);
@@ -65,15 +72,25 @@ int main(int argc, char ** args)
       close(CONSUMER_READ_FD);
 
       write(PRODUCER_WRITE_FD, input, size);
+      close(PRODUCER_WRITE_FD);
+
+      int status;
+      wait(&status);
+      if(WEXITSTATUS(status)!=0)
+      {
+        free(input);
+        exit(1);
+      }
 
       char parity = parityByte(input, size);
       char * bytes = charToHex(parity);
 
       free(input);
+      free(bytes);
 
       fprintf(stderr, "in parity: %s\n",bytes);
 
-      close(PRODUCER_WRITE_FD);
+      exit(0);
 
     }
   }
@@ -81,10 +98,19 @@ int main(int argc, char ** args)
     close(PRODUCER_WRITE_FD);
     close(FILTER_READ_FD);
     close(FILTER_WRITE_FD);
+    free(input);
+
+    int status;
+    wait(&status);
+    if(WEXITSTATUS(status)>0)
+    {
+      close(CONSUMER_READ_FD);
+      return -1;
+    }
 
     char buffer[READ_BUFFER_SIZE+1]={0};
     int readSize =0, size=0, allocsize=INITIAL_INPUT_SIZE;
-    char * string = malloc(allocsize);
+    char * string = calloc(1,allocsize);
 
     while((readSize = read(CONSUMER_READ_FD,buffer,READ_BUFFER_SIZE))!=0){
       if(size>=allocsize){
@@ -100,7 +126,6 @@ int main(int argc, char ** args)
     char parity = parityByte(string,size);
     char * hexString = charToHex(parity);
 
-
     fprintf(stderr, "out parity: %s\n",hexString);
 
     printf("%s\n",string);
@@ -109,6 +134,7 @@ int main(int argc, char ** args)
     free(hexString);
     close(CONSUMER_READ_FD);
   }
+  return 0;
 }
 
 int fetchInputFromStdin(char ** bufferPosition)
